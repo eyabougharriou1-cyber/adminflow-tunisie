@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AdminFlow</title>
+<style>
+:root{--bg:#f7f8fa;--card:#fff;--text:#14171f;--muted:#5d6675;--line:#e3e6ec;--accent:#2f5bea;
+--g:#e8f3ec;--gt:#2f7a4d;--b:#e7eefc;--bt:#2f5bea;--p:#eee9fb;--pt:#6a45c2;--o:#fbeedd;--ot:#b36a1d;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1218;--card:#181c25;--text:#eef0f5;--muted:#9aa3b2;--line:#2a2f3b;--accent:#6f8dff;
+--g:#17302390;--gt:#6fd09a;--b:#1b2a4d;--bt:#8aa6ff;--p:#2a2147;--pt:#b79cff;--o:#3a2a15;--ot:#f0b56b}}
+:root[data-theme="dark"]{--bg:#0f1218;--card:#181c25;--text:#eef0f5;--muted:#9aa3b2;--line:#2a2f3b;--accent:#6f8dff;--g:#173023;--gt:#6fd09a;--b:#1b2a4d;--bt:#8aa6ff;--p:#2a2147;--pt:#b79cff;--o:#3a2a15;--ot:#f0b56b}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{max-width:640px;margin:0 auto;padding:0 18px 40px}
+.hero{margin:6px 0 20px;padding:0 2px}
+h1 em{font-style:normal;background:linear-gradient(transparent 62%,rgba(47,91,234,.28) 62%);padding:0 2px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.logo{font-weight:800;font-size:21px;letter-spacing:-.3px}.logo span{color:var(--accent)}
+.tag{font-size:12px;color:var(--muted);border:1px solid var(--line);padding:5px 12px;border-radius:99px}
+h1{font-size:30px;line-height:1.15;margin:0 0 12px;letter-spacing:-.6px}
+.sub{margin:0;font-size:15px;line-height:1.4;color:var(--muted)}
+.search{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 14px}
+.search input{flex:1;border:0;background:transparent;color:var(--text);font-size:16px;padding:15px 0;outline:none;min-width:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.cat{border:0;text-align:left;border-radius:18px;padding:16px;min-height:132px;cursor:pointer;font:inherit;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;outline:2px solid transparent}
+.cat.on{outline-color:var(--accent)}
+.cat .ic{font-size:24px;margin-bottom:auto}
+.cat b{font-size:18px}.cat small{font-size:13px;line-height:1.3}
+.c-doc{background:var(--g);color:var(--gt)}.c-etu{background:var(--b);color:var(--bt)}
+.c-tra{background:var(--p);color:var(--pt)}.c-adm{background:var(--o);color:var(--ot)}
+.cat b{color:var(--text)}
+h2{font-size:16px;margin:22px 0 10px;display:flex;justify-content:space-between;align-items:center}
+h2 button{border:0;background:none;color:var(--accent);font:inherit;font-size:14px;cursor:pointer}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
+.item b{display:block;font-size:15px}.item span{font-size:13px;color:var(--muted)}
+.go{color:var(--accent);font-size:20px}
+.empty{color:var(--muted);text-align:center;padding:24px 0}
+#msg{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;width:max-content;max-width:90%}
+#msg.show{opacity:1}
+.back{border:0;background:none;color:var(--accent);font:inherit;font-size:15px;padding:16px 0 8px;cursor:pointer}
+#detail h1{font-size:26px;margin:4px 0 8px}
+#detail h2{margin:24px 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:13px;color:var(--muted)}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin:2px 0 12px}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.chk{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:8px;cursor:pointer;font-size:15px;line-height:1.35}
+.chk input{width:20px;height:20px;margin:1px 0 0;accent-color:var(--accent);flex:none}
+.steps{list-style:none;padding:0;margin:0;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:12px;margin-bottom:12px;font-size:15px;line-height:1.4}
+.steps li::before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.note{background:var(--o);color:var(--ot);border-radius:12px;padding:11px 13px;font-size:13px;margin:16px 0}
+.cta{width:100%;border:0;border-radius:14px;background:var(--accent);color:#fff;font:inherit;font-weight:600;padding:15px;margin-top:10px;cursor:pointer}
+.gcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px 20px;font-size:21px;line-height:1.35;font-weight:600;margin:14px 0;min-height:140px;display:flex;align-items:center}
+.gbtns{display:flex;gap:10px}.cta.sec{background:var(--card);color:var(--text);border:1px solid var(--line)}.cta:disabled{opacity:.4}
+.done{text-align:center;padding-top:40px}.done .big{font-size:64px}
+.assist,.mine{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:16px}
+.assist b{font-size:15px}.arow{display:flex;gap:8px;margin-top:10px}
+.arow input,#detail textarea,#detail input[type=date]{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:12px;padding:12px;font:inherit;font-size:15px}
+.arow button,.sbtn{border:0;border-radius:12px;background:var(--accent);color:#fff;font:inherit;font-weight:600;padding:0 16px;cursor:pointer}
+#ares{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.mine h3{margin:0 0 6px;font-size:15px}.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-top:1px solid var(--line);font-size:14px;cursor:pointer}.row span{color:var(--muted);font-size:12px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;gap:8px}
+#detail textarea{width:100%;min-height:70px;flex:none}.sbtn{padding:12px 16px}
+[dir=rtl] .cat,[dir=rtl] .back{text-align:right}[dir=rtl] .go{transform:scaleX(-1)}
+footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="home">
+<section class="hero">
+<header><div class="logo">Admin<span>Flow</span></div><div style="display:flex;gap:8px;align-items:center"><div class="tag">🇹🇳 Tunisie</div><button class="tag" id="lg" style="background:none;cursor:pointer;color:var(--accent);font-weight:600;font-family:inherit">عربي</button></div></header>
+<h1>Quel service <em>administratif</em> recherchez-vous ?</h1>
+<p class="sub">Documents, étapes, administrations : tout est expliqué simplement.</p>
+</section>
+
+<div class="search"><span>🔍</span><input id="q" type="search" placeholder="Rechercher une démarche…" autocomplete="off"></div>
+
+<div class="assist"><b>🤖 Je ne sais pas par où commencer</b><div class="arow"><input id="aq" placeholder="Ex : نحب نسافر, permis, bourse…"><button id="ab">Trouver</button></div><div id="ares"></div></div>
+<div id="mine" class="mine" hidden></div>
+<div class="grid">
+<button class="cat c-doc" data-c="Documents"><span class="ic">🪪</span><b>Documents</b><small>Carte d’identité, passeport</small></button>
+<button class="cat c-etu" data-c="Études"><span class="ic">🎓</span><b>Études</b><small>Inscription, bourses, dossiers</small></button>
+<button class="cat c-tra" data-c="Travail"><span class="ic">💼</span><b>Travail</b><small>Emploi, inscription, dossiers</small></button>
+<button class="cat c-adm" data-c="Administration"><span class="ic">🏛️</span><b>Administration</b><small>Certificats, demandes</small></button>
+</div>
+
+<h2><span id="title">Démarches populaires</span><button id="reset" hidden>Tout voir</button></h2>
+<div class="list" id="list"></div>
+</div>
+<section id="detail" hidden></section>
+
+<footer>AdminFlow · Prototype · Les infos sont indicatives, vérifiez auprès de l’administration.</footer>
+<div id="msg"></div>
+
+<script>
+var D=[
+["Faire ma carte d’identité nationale (CNI)","Documents","Police / Garde nationale"],
+["Renouveler ma carte d’identité","Documents","Police / Garde nationale"],
+["Faire un passeport","Documents","Ministère de l’Intérieur"],
+["Renouveler mon passeport","Documents","Ministère de l’Intérieur"],
+["Permis de conduire","Documents","ATTT / Ministère du Transport"],
+["Inscription à l’université","Études","Ministère de l’Enseignement supérieur"],
+["Bourse universitaire","Études","Œuvres universitaires"],
+["Demande de logement universitaire","Études","Œuvres universitaires"],
+["Attestation d’inscription","Études","Établissement"],
+["Inscription au chômage / emploi","Travail","Bureau de l’emploi (ANETI)"],
+["Dossier de recrutement public","Travail","Concours de la fonction publique"],
+["Attestation de travail","Travail","Employeur"],
+["Extrait de naissance","Administration","Commune / Municipalité"],
+["Certificat de résidence","Administration","Délégation"],
+["Certificat de nationalité","Administration","Tribunal de première instance"],
+["Légalisation de signature","Administration","Municipalité"],
+["Extrait du casier judiciaire (B3)","Administration","Ministère de la Justice"]
+];
+var showAll=false,cat="",q=document.getElementById("q"),list=document.getElementById("list"),
+title=document.getElementById("title"),reset=document.getElementById("reset"),msg=document.getElementById("msg");
+function norm(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+function render(){
+ var t=norm(q.value.trim()),r=D.filter(function(d){
+  return (!cat||d[1]===cat)&&(!t||norm(d[0]+" "+d[2]).indexOf(t)>-1)});
+ var pop=!cat&&!t;if(pop&&!showAll)r=r.slice(0,5);
+ title.textContent=cat?cat:(t?"Résultats":(showAll?"Toutes les démarches ("+D.length+")":"Démarches populaires"));
+ reset.hidden=pop&&!showAll;
+ list.innerHTML="";
+ if(!r.length){list.innerHTML='<div class="empty">Aucune démarche trouvée.</div>';return}
+ r.forEach(function(d){
+  var e=document.createElement("div");e.className="item";
+  e.innerHTML="<div><b></b><span></span></div><div class='go'>›</div>";
+  e.querySelector("b").textContent=d[0];e.querySelector("span").textContent=d[2]+(DET[d[0]]?" · ✓ Guide complet":"");
+  e.onclick=function(){openD(d)};
+  list.appendChild(e)});
+ if(pop&&!showAll){var m=document.createElement("button");m.className="cta sec";m.textContent="Voir toutes les démarches ("+D.length+")";m.onclick=function(){showAll=true;render()};list.appendChild(m)}}
+function toast(t){msg.textContent=t;msg.classList.add("show");setTimeout(function(){msg.classList.remove("show")},1800)}
+document.querySelectorAll(".cat").forEach(function(b){
+ b.onclick=function(){var c=b.dataset.c;cat=(cat===c)?"":c;
+  document.querySelectorAll(".cat").forEach(function(x){x.classList.toggle("on",x.dataset.c===cat)});render()}});
+reset.onclick=function(){showAll=false;cat="";q.value="";document.querySelectorAll(".cat").forEach(function(x){x.classList.remove("on")});render()};
+var DET={
+"Faire ma carte d’identité nationale (CNI)":{delay:"Quelques jours à 2 semaines",where:"Poste de police ou garde nationale de votre zone",docs:["Extrait de naissance récent","Photos d’identité","Timbre fiscal","Justificatif de résidence","Pièce justifiant votre identité (livret de famille, ancien document…)"],steps:["Rassemblez les documents de la liste","Achetez le timbre fiscal","Déposez le dossier au poste de police ou à la garde nationale","Prenez vos empreintes sur place","Récupérez votre carte à la date indiquée"]},
+"Renouveler ma carte d’identité":{delay:"Quelques jours à 2 semaines",where:"Poste de police ou garde nationale",docs:["Ancienne carte d’identité","Extrait de naissance récent","Photos d’identité","Timbre fiscal","Déclaration de perte (si carte perdue)"],steps:["Préparez les documents","Achetez le timbre fiscal","Déposez la demande de renouvellement","Récupérez la nouvelle carte"]},
+"Faire un passeport":{delay:"Variable selon le service",where:"Bureau des passeports (police) ou service dédié",docs:["Carte d’identité nationale","Extrait de naissance","Photos d’identité","Timbres fiscaux","Autorisation parentale (pour un mineur)"],steps:["Vérifiez les documents exigés pour votre cas","Achetez les timbres fiscaux","Déposez le dossier","Suivez l’avancement puis retirez le passeport"]},
+"Permis de conduire":{delay:"Plusieurs semaines (formation + examens)",where:"Auto-école agréée, puis ATTT / services du Transport",docs:["Carte d’identité nationale","Certificat médical","Photos d’identité","Timbre fiscal","Inscription à une auto-école"],steps:["Inscrivez-vous dans une auto-école agréée","Passez la visite médicale","Réussissez l’examen du code de la route","Réussissez l’examen de conduite","Retirez votre permis"]},
+"Inscription à l’université":{delay:"Selon le calendrier officiel",where:"Plateforme d’orientation en ligne puis établissement",docs:["Diplôme du baccalauréat","Carte d’identité nationale","Photos d’identité","Fiche d’orientation","Frais d’inscription"],steps:["Consultez le calendrier d’orientation","Faites vos vœux en ligne","Attendez les résultats d’orientation","Déposez le dossier à l’établissement","Payez les frais et récupérez l’attestation"]},
+"Bourse universitaire":{delay:"Selon la campagne annuelle",where:"Œuvres universitaires",docs:["Attestation d’inscription","Justificatifs de revenus des parents","Carte d’identité","Extrait de naissance"],steps:["Surveillez l’ouverture de la campagne","Remplissez la demande","Joignez les justificatifs","Suivez la réponse"]},
+"Extrait de naissance":{delay:"Souvent immédiat",where:"Commune du lieu de naissance (ou en ligne si disponible)",docs:["Carte d’identité","Informations d’état civil (date et lieu de naissance)"],steps:["Rendez-vous à la commune de naissance","Présentez votre pièce d’identité","Demandez l’extrait (copie intégrale si besoin)"]},
+"Renouveler mon passeport":{delay:"Variable selon le service",where:"Bureau des passeports (police)",docs:["Ancien passeport","Carte d’identité nationale","Photos d’identité","Timbres fiscaux"],steps:["Rassemblez les documents","Achetez les timbres fiscaux","Déposez la demande de renouvellement","Retirez le nouveau passeport"]},
+"Demande de logement universitaire":{delay:"Selon la campagne annuelle",where:"Œuvres universitaires",docs:["Attestation d’inscription","Carte d’identité nationale","Justificatifs de revenus des parents","Photos d’identité"],steps:["Surveillez l’ouverture des demandes","Remplissez le formulaire","Joignez les justificatifs","Consultez les résultats d’affectation"]},
+"Attestation d’inscription":{delay:"Souvent immédiat",where:"Secrétariat ou espace en ligne de votre établissement",docs:["Carte étudiant","Carte d’identité nationale"],steps:["Connectez-vous à l’espace étudiant ou allez au secrétariat","Demandez l’attestation","Vérifiez l’année et la filière indiquées"]},
+"Inscription au chômage / emploi":{delay:"Souvent le jour même",where:"Bureau de l’emploi de votre région",docs:["Carte d’identité nationale","Diplômes ou attestations","Photos d’identité","CV"],steps:["Préparez vos documents","Rendez-vous au bureau de l’emploi","Remplissez la fiche d’inscription","Gardez votre attestation d’inscription"]},
+"Dossier de recrutement public":{delay:"Selon le calendrier du concours",where:"Administration qui organise le concours",docs:["Carte d’identité nationale","Diplômes","Extrait de casier judiciaire (B3)","Certificat médical","Photos d’identité"],steps:["Lisez l’avis du concours et ses conditions","Préparez toutes les pièces","Déposez le dossier avant la date limite","Suivez la liste des candidats retenus"]},
+"Attestation de travail":{delay:"Quelques jours",where:"Service des ressources humaines de l’employeur",docs:["Demande écrite","Carte d’identité nationale"],steps:["Rédigez une demande à votre employeur","Déposez-la aux ressources humaines","Récupérez l’attestation signée et cachetée"]},
+"Certificat de résidence":{delay:"Quelques jours",where:"Délégation ou commune de votre domicile",docs:["Carte d’identité nationale","Justificatif de domicile (facture, contrat de location)","Demande écrite"],steps:["Rassemblez les justificatifs","Déposez la demande à la délégation ou à la commune","Récupérez le certificat"]},
+"Certificat de nationalité":{delay:"Variable",where:"Tribunal de première instance",docs:["Carte d’identité nationale","Extrait de naissance","Documents prouvant la filiation","Timbre fiscal"],steps:["Préparez les pièces d’état civil","Achetez le timbre fiscal","Déposez la demande au tribunal","Retirez le certificat"]},
+"Légalisation de signature":{delay:"Immédiat, sur place",where:"Municipalité",docs:["Carte d’identité nationale","Document à signer (non signé)"],steps:["Allez à la municipalité avec le document non signé","Signez devant l’agent","Faites apposer le cachet"]},
+"Extrait du casier judiciaire (B3)":{delay:"Souvent immédiat",where:"Guichet du casier judiciaire ou service en ligne",docs:["Carte d’identité nationale","Timbre fiscal"],steps:["Préparez votre carte d’identité","Faites la demande au guichet ou en ligne","Retirez l’extrait (bulletin n°3)"]}
+};
+var P={},R=[],L=[];
+try{P=JSON.parse(localStorage.getItem("af")||"{}");R=JSON.parse(localStorage.getItem("afr")||"[]");L=JSON.parse(localStorage.getItem("afl")||"[]")}catch(e){}
+function sv(){try{localStorage.setItem("af",JSON.stringify(P))}catch(e){}}
+function svR(){try{localStorage.setItem("afr",JSON.stringify(R))}catch(e){}}
+function svL(){try{localStorage.setItem("afl",JSON.stringify(L))}catch(e){}}
+function byT(t){return D.filter(function(d){return d[0]===t})[0]}
+function mine(){
+ var m=document.getElementById("mine"),h="",rh="",k,today=new Date();today.setHours(0,0,0,0);
+ for(k in P){var p=P[k],x=DET[k];if(!x||!byT(k))continue;var n=(p.docs||[]).filter(Boolean).length;
+  if(p.done||p.step>0||n)h+='<div class="row" data-t="'+k+'"><div>'+k+'<br><span>'+(p.done?"✓ Terminé":(p.step>0?"Étape "+(p.step+1)+" sur "+x.steps.length:n+"/"+x.docs.length+" documents prêts"))+'</span></div><b>›</b></div>'}
+ R.forEach(function(r,i){var dd=Math.round((new Date(r.d+"T00:00:00")-today)/864e5);
+  rh+='<div class="row" style="cursor:default"><div>'+r.t+'<br><span>'+(dd<0?"En retard de "+(-dd)+" j":(dd===0?"Aujourd’hui":"Dans "+dd+" jours"))+' · '+r.d+'</span></div><b data-r="'+i+'" style="cursor:pointer;padding:6px">✕</b></div>'});
+ var all=(h?'<h3>▶ Reprendre</h3>'+h:'')+(rh?'<h3 style="margin-top:12px">⏰ Mes rappels</h3>'+rh:'');
+ m.hidden=!all;m.innerHTML=all;
+ m.querySelectorAll(".row[data-t]").forEach(function(r){r.onclick=function(){openD(byT(r.dataset.t))}});
+ m.querySelectorAll("b[data-r]").forEach(function(b){b.onclick=function(){R.splice(+b.dataset.r,1);svR();mine()}});
+}
+var KW={
+"Faire ma carte d’identité nationale (CNI)":"cni carte identite hawiya 7awiya بطاقة تعريف",
+"Renouveler ma carte d’identité":"renouveler carte identite perdue perte ضاعت تجديد",
+"Faire un passeport":"passeport jawaz safar voyage voyager nsafer جواز سفر نسافر",
+"Renouveler mon passeport":"renouveler passeport expire jawaz تجديد جواز",
+"Permis de conduire":"permis conduire conduite auto ecole code sya9a rokhsa رخصة سياقة نسوق",
+"Inscription à l’université":"universite fac inscription bac orientation جامعة تسجيل نسجل",
+"Bourse universitaire":"bourse minha mnha منحة مينحة",
+"Demande de logement universitaire":"logement foyer universitaire سكن جامعي",
+"Attestation d’inscription":"attestation inscription etudiant شهادة تسجيل",
+"Inscription au chômage / emploi":"chomage emploi travail khedma khdma batala بطالة خدمة شغل",
+"Dossier de recrutement public":"concours recrutement fonction publique وظيفة",
+"Attestation de travail":"attestation travail employeur شهادة عمل",
+"Extrait de naissance":"extrait naissance acte naissance ولادة",
+"Certificat de résidence":"residence domicile adresse skna sakan سكنى إقامة",
+"Certificat de nationalité":"nationalite jensiya جنسية",
+"Légalisation de signature":"legalisation signature امضاء إمضاء",
+"Extrait du casier judiciaire (B3)":"casier judiciaire b3 سجل عدلي"};
+var STOP=["faire","veux","pour","une","des","les","mon","nheb","nhib","نحب"];
+function nz(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\u064b-\u065f]/g,"")}
+function ask(){
+ var qs=nz(document.getElementById("aq").value).split(/[\s,.?!؟،]+/).filter(function(w){return w.length>2&&STOP.indexOf(w)<0}),res=document.getElementById("ares");
+ var sc=D.map(function(d){var s=nz(d[0]+" "+(KW[d[0]]||"")),n=0;qs.forEach(function(w){if(s.indexOf(w)>-1)n++});return[n,d]}).filter(function(a){return a[0]>0}).sort(function(a,b){return b[0]-a[0]}).slice(0,3);
+ res.innerHTML="";
+ if(!sc.length){res.innerHTML='<div class="empty">Je n’ai pas trouvé. Essayez : passeport, bourse, permis…</div>';return}
+ sc.forEach(function(a){var e=document.createElement("div");e.className="item";e.innerHTML="<div><b></b><span></span></div><div class='go'>›</div>";e.querySelector("b").textContent=a[1][0];e.querySelector("span").textContent=a[1][2];e.onclick=function(){openD(a[1])};res.appendChild(e)})}
+document.getElementById("ab").onclick=ask;document.getElementById("aq").onkeydown=function(e){if(e.key==="Enter")ask()};
+function openD(d){
+ var x=DET[d[0]],h=document.getElementById("home"),s=document.getElementById("detail");
+ var html='<button class="back" id="bk">‹ Retour</button><h1></h1><div class="chips"><span class="chip"></span>';
+ if(x)html+='<span class="chip">⏱ '+x.delay+'</span>';
+ html+='</div>';
+ if(x){
+  html+='<h2>Documents requis</h2><div class="bar"><i id="pb"></i></div>';
+  var pd=(P[d[0]]||{}).docs||[];x.docs.forEach(function(t,k){html+='<label class="chk"><input type="checkbox"'+(pd[k]?' checked':'')+'><span>'+t+'</span></label>'});
+  html+='<h2>Étapes à suivre</h2><ol class="steps">';
+  x.steps.forEach(function(t){html+='<li>'+t+'</li>'});
+  html+='</ol><h2>Où aller ?</h2><div class="item" style="cursor:default"><div><b>'+x.where+'</b></div><div class="go">📍</div></div>';
+ }else{html+='<div class="empty">Détails bientôt disponibles pour cette démarche.</div>'}
+ var ps=(P[d[0]]||{}).step||0;
+ html+='<h2>⏰ Rappel</h2><div class="box"><input type="date" id="rd"><button class="sbtn" id="rb">Me rappeler</button></div><h2>🚩 Signaler une erreur</h2><textarea id="sg" placeholder="Une pièce a changé ? Un délai est faux ?"></textarea><button class="sbtn" id="sb" style="margin-top:8px">Envoyer</button>';
+ html+='<div class="note">Infos indicatives : les pièces et délais peuvent varier. Vérifiez auprès de l’administration concernée.</div><button class="cta" id="ct">'+(x&&ps>0&&ps<x.steps.length?'Reprendre (étape '+(ps+1)+')':'Commencer cette démarche')+'</button>';
+ s.innerHTML=html;
+ s.querySelector("h1").textContent=d[0];
+ s.querySelector(".chip").textContent="🏛 "+d[2];
+ h.hidden=true;s.hidden=false;window.scrollTo(0,0);
+ document.getElementById("bk").onclick=function(){s.hidden=true;h.hidden=false;window.scrollTo(0,0)};
+ document.getElementById("ct").onclick=function(){if(x)guide(d,x,ps>0&&ps<x.steps.length?ps:0);else toast("Bientôt disponible")};
+ var cb=s.querySelectorAll("input[type=checkbox]"),pb=document.getElementById("pb");
+ function upd(){if(!pb)return;var n=0;cb.forEach(function(c){if(c.checked)n++});pb.style.width=(cb.length?n*100/cb.length:0)+"%"}
+ cb.forEach(function(c){c.onchange=function(){upd();P[d[0]]=P[d[0]]||{};P[d[0]].docs=[].map.call(cb,function(z){return z.checked});sv();mine()}});upd();
+ document.getElementById("rb").onclick=function(){var v=document.getElementById("rd").value;if(!v){toast("Choisissez une date");return}R.push({t:d[0],d:v});svR();mine();toast("Rappel ajouté ⏰")};
+ document.getElementById("sb").onclick=function(){var v=document.getElementById("sg").value.trim();if(!v){toast("Écrivez votre remarque");return}L.push({t:d[0],m:v});svL();document.getElementById("sg").value="";toast("Merci ! Signalement enregistré 🚩")};
+}
+function guide(d,x,i){
+ var s=document.getElementById("detail"),n=x.steps.length;window.scrollTo(0,0);
+ P[d[0]]=P[d[0]]||{};P[d[0]].step=i>=n?0:i;P[d[0]].done=i>=n;sv();mine();
+ if(i>=n){
+  s.innerHTML='<div class="done"><div class="big">🎉</div><h1>Bravo !</h1><p class="sub">Vous avez terminé toutes les étapes : '+d[0]+'.</p><button class="cta" id="gh">Retour à l’accueil</button></div>';
+  document.getElementById("gh").onclick=function(){s.hidden=true;document.getElementById("home").hidden=false;window.scrollTo(0,0)};return}
+ s.innerHTML='<button class="back" id="gq">‹ Quitter</button><div class="bar"><i style="width:'+(i*100/n)+'%"></i></div><div class="sub">Étape '+(i+1)+' sur '+n+'</div><div class="gcard">'+x.steps[i]+'</div>'+(i==0?'<div class="note">À avoir avec vous : '+x.docs.join(", ")+'</div>':'')+'<div class="gbtns"><button class="cta sec" id="gp"'+(i?'':' disabled')+'>Précédent</button><button class="cta" id="gn">'+(i==n-1?'Terminer ✓':'Suivant')+'</button></div>';
+ document.getElementById("gq").onclick=function(){openD(d)};
+ document.getElementById("gp").onclick=function(){guide(d,x,i-1)};
+ document.getElementById("gn").onclick=function(){guide(d,x,i+1)};
+}
+q.oninput=render;render();mine();
+var LG='fr';try{LG=localStorage.getItem('aflg')||'fr'}catch(e){}
+var AR={
+'Documents, étapes, administrations : tout est expliqué simplement.':'الوثائق والمراحل والإدارات: كل شيء مشروح ببساطة.',
+'Tunisie':'تونس','Je ne sais pas par où commencer':'لا أعرف من أين أبدأ','Trouver':'ابحث',
+'Documents requis':'الوثائق المطلوبة','Documents':'الوثائق','Carte d’identité, passeport':'بطاقة التعريف، جواز السفر',
+'Études':'الدراسة','Inscription, bourses, dossiers':'التسجيل، المنح، الملفات',
+'Travail':'العمل','Emploi, inscription, dossiers':'التشغيل، التسجيل، الملفات',
+'Administration qui organise le concours':'الإدارة المنظّمة للمناظرة','Administration':'الإدارة','Certificats, demandes':'الشهادات، الطلبات',
+'Démarches populaires':'الإجراءات الشائعة','Tout voir':'عرض الكل','Résultats':'النتائج','Toutes les démarches':'كل الإجراءات','Voir toutes les démarches':'عرض كل الإجراءات',
+'Aucune démarche trouvée.':'لم يتم العثور على إجراء.','✓ Guide complet':'✓ دليل كامل',
+'▶ Reprendre':'▶ المتابعة','⏰ Mes rappels':'⏰ تذكيراتي','✓ Terminé':'✓ مكتمل','documents prêts':'وثائق جاهزة',
+'AdminFlow · Prototype · Les infos sont indicatives, vérifiez auprès de l’administration.':'AdminFlow · نموذج أولي · المعلومات إرشادية، تأكد منها لدى الإدارة.',
+'‹ Retour':'‹ رجوع','Étapes à suivre':'المراحل المتبعة','Où aller ?':'أين أذهب؟','⏰ Rappel':'⏰ تذكير','Me rappeler':'ذكّرني','🚩 Signaler une erreur':'🚩 الإبلاغ عن خطأ','Envoyer':'إرسال',
+'Infos indicatives : les pièces et délais peuvent varier. Vérifiez auprès de l’administration concernée.':'معلومات إرشادية: قد تختلف الوثائق والآجال. تأكد لدى الإدارة المعنية.',
+'Commencer cette démarche':'ابدأ هذا الإجراء','Détails bientôt disponibles pour cette démarche.':'التفاصيل متوفرة قريبا لهذا الإجراء.',
+'‹ Quitter':'‹ خروج','Précédent':'السابق','Suivant':'التالي','Terminer ✓':'إنهاء ✓','À avoir avec vous :':'ما يجب أن تحضره:','Bravo !':'أحسنت!','Retour à l’accueil':'العودة للرئيسية','Vous avez terminé toutes les étapes :':'لقد أنهيت كل المراحل:',
+'Je n’ai pas trouvé. Essayez : passeport, bourse, permis…':'لم أجد نتيجة. جرّب: جواز، منحة، رخصة…',
+'Aujourd’hui':'اليوم','Choisissez une date':'اختر تاريخا','Rappel ajouté ⏰':'تمت إضافة التذكير ⏰','Merci ! Signalement enregistré 🚩':'شكرا! تم تسجيل البلاغ 🚩','Écrivez votre remarque':'اكتب ملاحظتك','Bientôt disponible':'قريبا',
+'Faire ma carte d’identité nationale (CNI)':'استخراج بطاقة التعريف الوطنية','Renouveler ma carte d’identité':'تجديد بطاقة التعريف','Faire un passeport':'استخراج جواز سفر','Renouveler mon passeport':'تجديد جواز السفر','Permis de conduire':'رخصة السياقة',
+'Inscription à l’université':'التسجيل بالجامعة','Bourse universitaire':'المنحة الجامعية','Demande de logement universitaire':'طلب سكن جامعي','Attestation d’inscription':'شهادة تسجيل','Inscription au chômage / emploi':'التسجيل بمكتب التشغيل',
+'Dossier de recrutement public':'ملف الانتداب في الوظيفة العمومية','Attestation de travail':'شهادة عمل','Extrait de naissance récent':'مضمون ولادة حديث','Extrait de naissance':'مضمون ولادة','Certificat de résidence':'شهادة إقامة',
+'Certificat de nationalité':'شهادة جنسية','Légalisation de signature':'التعريف بالإمضاء','Extrait du casier judiciaire (B3)':'مضمون السجل العدلي (النشرة عدد 3)','Extrait de casier judiciaire (B3)':'مضمون السجل العدلي',
+'Police / Garde nationale':'الشرطة / الحرس الوطني','Ministère de l’Intérieur':'وزارة الداخلية','Commune / Municipalité':'البلدية','Ministère de l’Enseignement supérieur':'وزارة التعليم العالي',
+'Œuvres universitaires':'الخدمات الجامعية','Établissement':'المؤسسة الجامعية','Bureau de l’emploi (ANETI)':'مكتب التشغيل (ANETI)','Concours de la fonction publique':'مناظرات الوظيفة العمومية',
+'Employeur':'المؤجّر','Délégation':'المعتمدية','Tribunal de première instance':'المحكمة الابتدائية','Municipalité':'البلدية','Ministère de la Justice':'وزارة العدل','ATTT / Ministère du Transport':'الوكالة الفنية للنقل البري / وزارة النقل',
+'Carte d’identité nationale':'بطاقة التعريف الوطنية','Photos d’identité':'صور شمسية','Timbres fiscaux':'طوابع جبائية','Timbre fiscal':'طابع جبائي','Justificatif de résidence':'وثيقة إثبات الإقامة',
+'Ancienne carte d’identité':'بطاقة التعريف القديمة','Ancien passeport':'جواز السفر القديم','Certificat médical':'شهادة طبية','Diplôme du baccalauréat':'شهادة الباكالوريا','Diplômes':'الشهادات العلمية',
+'Justificatifs de revenus des parents':'وثائق مداخيل الأولياء','Carte étudiant':'بطاقة الطالب','Demande écrite':'مطلب كتابي'};
+var RX=[[/Reprendre \(étape (\d+)\)/,'متابعة (المرحلة $1)'],[/Étape (\d+) sur (\d+)/,'المرحلة $1 من $2'],[/Dans (\d+) jours/,'بعد $1 أيام'],[/En retard de (\d+) j/,'متأخر بـ $1 يوم']];
+var KEYS=Object.keys(AR).sort(function(a,b){return b.length-a.length});
+var HAR='ما هي <em>الخدمة الإدارية</em> التي تبحث عنها؟';
+var PH=[['q','ابحث عن إجراء…'],['aq','مثال: أريد السفر، رخصة، منحة…'],['sg','هل تغيّرت وثيقة؟ هل الأجل خاطئ؟']];
+var obs=new MutationObserver(function(){if(LG==='ar')tr()});
+function tr(){
+ obs.disconnect();
+ var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),n,ar=LG==='ar';
+ while(n=w.nextNode()){
+  var pn=n.parentNode?n.parentNode.nodeName:'';if(pn==='SCRIPT'||pn==='STYLE')continue;
+  if(n._t!==n.data)n._o=n.data;
+  var v=n._o;
+  if(ar){KEYS.forEach(function(k){if(v.indexOf(k)>-1)v=v.split(k).join(AR[k])});RX.forEach(function(r){v=v.replace(r[0],r[1])})}
+  if(n.data!==v)n.data=v;n._t=n.data}
+ PH.forEach(function(p){var el=document.getElementById(p[0]);if(!el)return;if(el._ph===undefined)el._ph=el.placeholder;el.placeholder=ar?p[1]:el._ph});
+ obs.observe(document.body,{childList:true,subtree:true,characterData:true})}
+function applyLang(){
+ var ar=LG==='ar',h=document.querySelector('.hero h1');
+ document.documentElement.dir=ar?'rtl':'ltr';document.documentElement.lang=ar?'ar':'fr';
+ if(h._f===undefined)h._f=h.innerHTML;h.innerHTML=ar?HAR:h._f;
+ document.getElementById('lg').textContent=ar?'Français':'عربي';
+ tr()}
+document.getElementById('lg').onclick=function(){LG=LG==='ar'?'fr':'ar';try{localStorage.setItem('aflg',LG)}catch(e){}applyLang()};
+applyLang();
+</script>
+</body>
+</html>
